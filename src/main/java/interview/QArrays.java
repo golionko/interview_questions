@@ -1,15 +1,155 @@
 package interview;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class QArrays {
 
     public static void main(String [ ] args){
-        System.out.println(singleNumber(new int[]{1,1,4,4,5,7,7}));
     }
 
+
+    //Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target.
+    //Return the sum of the three integers.
+    //Lets sort the array.
+    //When the array is sorted, try to fix the least integer by looping over it.
+    //Lets say the least integer in the solution is arr[i].
+    //
+    //Now we need to find a pair of integers j and k, such that arr[j] + arr[k] is closest to (target - arr[i]).
+    //To do that, let us try the 2 pointer approach.
+    //If we fix the two pointers at the end ( that is, i+1 and end of array ), we look at the sum.
+    //
+    //If the sum is smaller than the sum we need to get to, we increase the first pointer.
+    //If the sum is bigger, we decrease the end pointer to reduce the sum.
+    public int threeSumClosest(ArrayList<Integer> A, int B) {
+        int low, high, mid;
+        Collections.sort(A);
+        int n = A.size();
+        int res = A.get(0) + A.get(1) + A.get(2);
+
+        if (n == 3) {
+            return res;
+        }
+
+        int sum;
+
+
+
+        for (low = 0; low < n - 2; low++) {
+            mid = low + 1;
+            high = n - 1;
+            int num = B - A.get(low);
+
+            while (mid < high) {
+
+                sum = A.get(mid) + A.get(high);
+
+                if (sum == num)
+                    return B;
+                else if (sum < num) {
+                    mid++;
+                } else {
+                    high--;
+                }
+
+                int diff = Math.abs(sum - num);
+                int otherDiff = Math.abs(res - B);
+
+                if (diff < otherDiff)
+                    res = sum + A.get(low);
+
+            }
+
+        }
+
+
+        return res;
+
+
+    }
+
+    //Given a positive integer, return its corresponding column title as appear in an Excel sheet. 1 -> A ... 28 -> AB
+    public String convertToTitle(int a) {
+        String s="";
+        while(a!=0){
+            a=a-1;
+            char c=(char)(a%26+65);
+            s=c+s;
+            a/=26;
+        }
+        return s;
+    }
+
+
+    //Given a column title as appears in an Excel sheet, return its corresponding column number.
+    //This is just like base 26 number conversion.
+    public int titleToNumber(String a) {
+        int num = 0;
+        for (int i = a.length() - 1, j = 0; i >= 0; i--) {
+            num += (int) Math.pow(26, j) * (a.charAt(i) - 'A' + 1);
+            j++;
+        }
+        return num;
+    }
+
+    //
+    //Given a list of non negative integers, arrange them such that they form the largest number.
+    //
+    //Sorting all numbers in descending order is the simplest solution that occurs to us. But this doesn’t work.
+    //
+    //For example, 548 is greater than 60, but in the output, 60 comes before 548. As a second example, 98 is greater than 9, but 9 comes before 98 in the output.
+    //
+    //The solution is to use any comparison based sorting algorithm. Thus, instead of using the default comparison, write a comparison function myCompare() and use it to sort numbers.
+    //
+    //Given two numbers X and Y, how should myCompare() decide which number to put first – we compare two numbers XY (Y appended at the end of X) and YX (X appended at the end of Y).
+    //
+    //If XY is larger, then, in the output, X should come before Y, else Y should come before X.
+    //
+    //For example, let X and Y be 542 and 60. To compare X and Y, we compare 54260 and 60542. Since 60542 is greater than 54260, we put Y first.
+    public String largestNumber(final List<Integer> a) {
+        List<String> strs = new ArrayList<>();
+        for(Integer i : a){
+            strs.add(String.valueOf(i));
+        }
+
+        Collections.sort(strs, new MyCompartor());
+
+        StringBuffer strBuf = new StringBuffer();
+        for(String s : strs){
+            if("0".equals(s) && strBuf.length() != 0) {
+                continue;
+            }
+            strBuf.append(s);
+        }
+
+        return strBuf.toString();
+    }
+
+    class MyCompartor implements Comparator<String> {
+        @Override
+        public int compare(String s1, String s2) {
+            String first = s1 + s2;
+            String second = s2 + s1;
+            return second.compareTo(first);
+        }
+    }
+
+    //Find the contiguous subarray within an array (containing at least one number) which has the largest sum.
+    public int maxSubArray(final List<Integer> A) {
+
+        int sum = Integer.MIN_VALUE;
+        int last = 0;
+
+        for (int num : A) {
+
+            last += num;
+            sum = Math.max(sum, last);
+            if (last < 0)
+                last = 0;
+        }
+
+        return sum;
+
+    }
 
     //You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.
     // transpose and reverse
